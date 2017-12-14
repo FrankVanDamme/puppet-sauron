@@ -53,7 +53,7 @@ class sauron (
     String $server_file    = $sauron::params::server_file,
 ) inherits sauron::params {
 
-    @@concat::fragment { "$::fqdn":
+    @@concat::fragment { "sauron_server_$::fqdn":
 	target  => $server_file,
 	content => "$::fqdn\n",
 	#tag     => $sectname,
