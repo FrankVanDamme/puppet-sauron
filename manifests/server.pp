@@ -5,8 +5,11 @@ class sauron::server (
     file { "/etc/sauron":
 	ensure => directory,
     }
+    file { "/etc/sauron/diskspace":
+	ensure => directory,
+    }
 
-    file { "/etc/sauron/sauron.cfg":
+    file { "/etc/sauron/diskspace/config.cfg":
 	content => template("$module_name/sauron.cfg.erb"),
     } 
 
@@ -17,7 +20,7 @@ class sauron::server (
     concat { "$::sauron::whitelist_file": }
 
     cron { "sauron":
-	command => "/opt/maintenance-scripts/sauron/check.diskspace.sh > /dev/null", 
+	command => "/opt/maintenance-scripts/sauron/check.diskspace.sh -d /etc/sauron/diskspace > /dev/null", 
 	minute  => "*/5",
 	hour    => "*",
     }
