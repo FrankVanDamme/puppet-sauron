@@ -49,9 +49,15 @@ class sauron (
     Integer $threshold_notice   = $sauron::params::threshold_notice,
     Integer $threshold_warning  = $sauron::params::threshold_warning,
     Integer $threshold_critical = $sauron::params::threshold_critical,
-    String $whitelist_file  = $sauron::params::whitelist_file,
-    String $server_file    = $sauron::params::server_file,
+    String $whitelist_file      = $sauron::params::whitelist_file,
+    String $server_file         = $sauron::params::server_file,
+    $ensure                     = $sauron::params::ensure,
 ) inherits sauron::params {
+
+    user { "sauron":
+	ensure => $ensure,
+	system => true,
+    }
 
     @@concat::fragment { "sauron_server_$::fqdn":
 	target  => $server_file,
