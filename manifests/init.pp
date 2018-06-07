@@ -51,12 +51,13 @@ class sauron (
     Integer $threshold_critical = $sauron::params::threshold_critical,
     String $whitelist_file      = $sauron::params::whitelist_file,
     String $server_file         = $sauron::params::server_file,
-    $ensure                     = $sauron::params::ensure,
+    String $ensure              = $sauron::params::ensure,
 ) inherits sauron::params {
 
     user { "sauron":
-	ensure => $ensure,
-	system => true,
+	ensure     => $ensure,
+	system     => true,
+	managehome => true,
     }
 
     @@concat::fragment { "sauron_server_$::fqdn":
