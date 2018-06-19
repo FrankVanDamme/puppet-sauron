@@ -70,7 +70,7 @@ class sauron (
     if ( $whitelist != undef ){
 	@@concat::fragment { "sauron_whitelist_$::fqdn":
 	    target   => $whitelist_file, 
-	    content  => "$::fqdn $whitelist",
+	    content  => "$::fqdn $whitelist\n",
 	}
     }
 
