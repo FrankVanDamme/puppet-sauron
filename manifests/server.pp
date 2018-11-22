@@ -1,6 +1,6 @@
 class sauron::server (
     String $ensure = $sauron::params::ensure,
-    $recipients ,
+    Hash   $config = $sauron::params::config,
 ) inherits sauron::params {
     include sauron
 
@@ -16,21 +16,23 @@ class sauron::server (
 	ensure => $ensure_dir,
     }
 
-    file { "/etc/sauron/diskspace/config.cfg":
-	content => template("$module_name/sauron.cfg.erb"),
-	ensure  => $ensure,
-    } 
+    $f=lookup ( 'sauron::server::config', Hash, deep, {} )
+    notify { "f: $f; defaultconfig: $::sauron::params::config": }
 
-    Concat::Fragment <<| target  == "$::sauron::server_file" |>>
-    concat { "$::sauron::server_file": }
+    $config_ = deep_merge ( $::sauron::params::config, hiera_hash ( 'sauron::server::config', {} ) )
+    file { $config_file:
+    	content => hash2yaml($config_),
+    	ensure  => $ensure,
+    }
 
-    Concat::Fragment <<| target  == "$::sauron::whitelist_file" |>>
-    concat { "$::sauron::whitelist_file": }
+    Concat::Fragment <<| target  == "$::sauron::services_file" |>>
+    concat { "$::sauron::services_file": }
 
     cron { "sauron":
-	command => "/opt/maintenance-scripts/sauron/check.diskspace.sh -d /etc/sauron/diskspace > /dev/null", 
+	command => "/home/sauron/bin/sauron2/sauron.py -c $config_file -s $::sauron::services_file", 
 	minute  => "*/5",
 	hour    => "*",
 	ensure  => $ensure,
+	user    => "sauron",
     }
 }

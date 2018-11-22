@@ -44,14 +44,9 @@
 #
 
 class sauron (
-    $whitelist = undef,
-    Integer $threshold_info     = $sauron::params::threshold_info,
-    Integer $threshold_notice   = $sauron::params::threshold_notice,
-    Integer $threshold_warning  = $sauron::params::threshold_warning,
-    Integer $threshold_critical = $sauron::params::threshold_critical,
-    String $whitelist_file      = $sauron::params::whitelist_file,
-    String $server_file         = $sauron::params::server_file,
-    String $ensure              = $sauron::params::ensure,
+    String  $ensure             = $sauron::params::ensure,
+    String  $services_file      = $sauron::params::services_file,
+    Hash    $eye                = $sauron::params::eye,
 ) inherits sauron::params {
 
     user { "sauron":
@@ -60,18 +55,10 @@ class sauron (
 	managehome => true,
     }
 
-    @@concat::fragment { "sauron_server_$::fqdn":
-	target  => $server_file,
-	content => "$::fqdn\n",
-	#tag     => $sectname,
-	#order   => "${sectname}1",
-    }
+    $eye_ = hash2yaml({ $::fqdn => hiera_hash("sauron::eye", $eye) })
 
-    if ( $whitelist != undef ){
-	@@concat::fragment { "sauron_whitelist_$::fqdn":
-	    target   => $whitelist_file, 
-	    content  => "$::fqdn $whitelist\n",
-	}
+    @@concat::fragment { "sauron_services_$::fqdn":
+	target  => $services_file,
+	content => inline_template('<%= @eye_.sub(/^---$/, "")%>'),
     }
-
 }
