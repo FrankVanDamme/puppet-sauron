@@ -30,7 +30,7 @@ class sauron::server (
 
     cron { "sauron":
 	command => "/home/sauron/bin/sauron2/sauron.py -c $config_file -s $::sauron::services_file", 
-	minute  => "*/5",
+	minute  => "5",
 	hour    => "*",
 	ensure  => $ensure,
 	user    => "sauron",
