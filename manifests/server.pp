@@ -29,7 +29,7 @@ class sauron::server (
     concat { "$::sauron::services_file": }
 
     cron { "sauron":
-	command => "/home/sauron/bin/sauron2/sauron.py -c $config_file -s $::sauron::services_file", 
+	command => "/home/sauron/bin/sauron2/sauron.py -c $config_file -s $::sauron::services_file > /home/sauron/sauron2.d/logs/`date +cron_\%a_\%H:\%M`", 
 	minute  => "*/5",
 	hour    => "*",
 	ensure  => $ensure,
