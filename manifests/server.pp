@@ -33,6 +33,7 @@ class sauron::server (
         provider => git,
         source   => "https://github.com/flyingrocket/sauron.git",
         revision => $appversion,
+        owner    => "sauron",
     }
 
     $f=lookup ( 'sauron::server::config', Hash, deep, {} )
