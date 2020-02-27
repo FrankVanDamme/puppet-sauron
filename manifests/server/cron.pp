@@ -1,4 +1,6 @@
-class sauron::server::cron () inherits sauron::server {
+class sauron::server::cron (
+    $config_file,
+) inherits sauron::params {
     cron { "sauron":
 	command => "/home/sauron/bin/sauron2/sauron.py -c $config_file -s $::sauron::services_file > /home/sauron/sauron2.d/logs/`date +cron_\%a_\%H:\%M`", 
 	minute  => "*/5",

@@ -1,4 +1,15 @@
-class sauron::server::config () inherits sauron::server {
+class sauron::server::config (
+    $appversion,
+    $threshold_info,
+    $threshold_notice,
+    $threshold_warning,
+    $threshold_critical,
+    $ensure,
+    $services_file,
+    $config_file,
+    $eye,
+    $config,
+) inherits sauron::params {
     $ensure_dir = $ensure? {
 	present => directory,
 	default => $ensure,

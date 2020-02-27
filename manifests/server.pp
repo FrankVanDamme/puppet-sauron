@@ -6,7 +6,24 @@ class sauron::server (
 
     include sauron
 
-    include sauron::server::config
-    include sauron::server::cron
-    include sauron::server::app
+    class { "sauron::server::config":
+        $appversion         => $appversion,
+        $threshold_info     => $threshold_info,
+        $threshold_notice   => $threshold_notice,
+        $threshold_warning  => $threshold_warning,
+        $threshold_critical => $threshold_critical,
+        $ensure             => $ensure,
+        $services_file      => $services_file,
+        $config_file        => $config_file,
+        $eye                => $eye,
+        $config             => $config,
+    }
+
+    class { "sauron::server::cron":
+        $config => $config,
+    }
+
+    class { "sauron::server::app":
+        $appversion,
+    }
 }

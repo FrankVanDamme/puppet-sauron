@@ -1,4 +1,6 @@
-class sauron::server::app () inherits sauron::server {
+class sauron::server::app (
+    $appversion,
+) inherits sauron::params {
     # program code
     vcsrepo { "/home/sauron/bin/sauron2":
         ensure   => present,
