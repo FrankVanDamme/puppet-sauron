@@ -14,62 +14,133 @@
 
 ## Description
 
-Start with a one- or two-sentence summary of what the module does and/or what
-problem it solves. This is your 30-second elevator pitch for your module.
-Consider including OS/Puppet version it works with.
+This module sets up [Sauron](https://github.com/flyingrocket/sauron), a Python
+script for monitoring disk space on remote systems over SSH, to watch your
+remote boxen. 
 
-You can give more descriptive information in a second paragraph. This paragraph
-should answer the questions: "What does this module *do*?" and "Why would I use
-it?" If your module has a range of functionality (installation, configuration,
-management, etc.), this is the time to mention it.
+Should work on any platform that supports Python.
+
+Each host in your network can be assigned a customized configuration in Hiera
+or by class parameters. This module uses exported resources, so you need to
+have PuppetDB running and configured.
 
 ## Setup
 
-### What sauron affects **OPTIONAL**
+### What sauron affects
 
-If it's obvious what your module touches, you can skip this section. For
-example, folks can probably figure out that your mysql_instance module affects
-their MySQL instances.
+Besides installing the script and setting up cron jobs, Sauron will create a
+user on both monitored ("client") and monitoring ("server") systems and a file
+structure in it's home directory for tmp and log files.
 
-If there's more that they should know about, though, this is the place to mention:
+We rely on the vcsrepo module to clone Sauron from Github.
 
-* A list of files, packages, services, or operations that the module will alter,
-  impact, or execute.
-* Dependencies that your module automatically installs.
-* Warnings or other important notices.
+Config files are installed in /etc/sauron:
+
+* a ''global'' config file `puppet.config.yaml`
+* a ''services'' config file with per-node specific configurations,
+    `puppet.services.yaml`
 
 ### Setup Requirements **OPTIONAL**
 
-If your module requires anything extra before setting up (pluginsync enabled,
-etc.), mention it here.
-
-If your most recent release breaks compatibility or requires particular steps
-for upgrading, you might want to include an additional "Upgrading" section
-here.
+At the moment, you need Git installed to put Sauron in place (on the "server" only).
 
 ### Beginning with sauron
 
-The very basic steps needed for a user to get the module up and running. This
-can include setup steps, if necessary, or it can be an example of the most
-basic use of the module.
+First, install Git. Most Linux distribution provide Git as a package.
+
+On the system you choose to burden with the task of checking on the others'
+disk space:
+
+    include sauron::server
+
+in Hiera, where your server node will pick it up:
+
+    sauron::server::config:
+        notify:
+            - kermit@muppets.domain
+
+On the systems to be monitored:
+
+    include sauron
+
+From then on, you will get reports by email (provided your name is Kermit) on
+disk and inode usage by default thresholds, whenever the situaion of any one
+local partition (ext4,...) on a client changes.
 
 ## Usage
 
-This section is where you describe how to customize, configure, and do the
-fancy stuff with your module here. It's especially helpful if you include usage
-examples and code samples for doing things with your module.
+### Server side configuration
+
+The global configuration can be customised.
+
+The hash structure under `sauron::server::config` (which is looked up in Hiera using a deep hash merge) is translated litterally in the global config file in /etc/sauron/diskspace. Anything you put there will override or extend the default. 
+
+A slightly more extensive configuration could be:
+
+~~~ puppet
+sauron::server::config:
+    email:
+        enabled: true
+        server: smtp.your-isp.net
+    notify:
+        - kermit@muppets.domain
+    thresholds:
+      /var/lib/mysql:
+        info: 60
+        notice: 70
+        warning: 80
+        critical: 90
+~~~
+
+In this case, your email will be delivered directly by SMTP and the thresholds
+for the partition where your MySQL server's data lives will be considerable
+lower.
+
+For a full reference, see: https://github.com/flyingrocket/sauron/blob/master/config/example.config.yaml
+
+### Client side configuration
+
+Configuration can also be customized on a per-node basis. By default, each
+client node will get an entry in the services config file with no specific
+configuration. 
+
+The per client configuration supports much of the same directives as the global
+one. Once again, for full reference: https://github.com/flyingrocket/sauron/blob/master/config/example.services.yaml
+
+This structure goes under the eye of Sauron,:
+
+Include this data structure in your Hiera hierarchy, where it applies to a node
+to be monitored. In this example, we set a low bar for Grommit to complain about
+disk space exceeding 3 quarters of a partition:
+
+~~~ yaml
+sauron::eye:
+    notify:
+        - grommit@muppets.comain
+    thresholds:
+        default:
+            notice: 90
+            info: 75
+~~~
+
 
 ## Reference
 
-Here, include a complete list of your module's classes, types, providers,
-facts, along with the parameters for each. Users refer to this section (thus
-the name "Reference") to find specific details; most users don't read it per
-se.
+* server manifest parameters:
+  * `appversion` - Git tag, branch, or revision of Sauron to checkout 
+  * `ensure` - sets presence of application code, cron job, and config files
+  * `config` - global config file
+* main manifest parameters:
+  * `ensure` - presence of user and whether node shows up in services file
+  * `services_file` - aforementioned file listing nodes and their configuration
 
 ## Limitations
 
-This is where you list OS compatibility, version compatibility, etc. If there
-are Known Issues, you might want to include them under their own heading here.
+Does not configure the ssh login for the sauron user. But there is always the
+sshkeys module!
+
+There is no possibility to define multiple Sauron jobs, despite being able to
+configure the file names of the config and services file.
 
 ## Development
 
