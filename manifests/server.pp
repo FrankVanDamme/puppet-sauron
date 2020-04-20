@@ -17,15 +17,16 @@ class sauron::server (
         ensure             => $ensure,
         services_file      => $services_file,
         config_file        => $config_file,
-        eye                => $eye,
         config             => $config,
     }
 
     class { "sauron::server::cron":
         config_file => $config_file,
+        ensure      => $ensure,
     }
 
     class { "sauron::server::app":
         appversion => $appversion,
+        ensure     => $ensure,
     }
 }

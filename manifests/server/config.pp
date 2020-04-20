@@ -7,7 +7,6 @@ class sauron::server::config (
     $ensure            = $sauron::params::ensure,
     $services_file     = $sauron::params::services_file,
     $config_file       = $sauron::params::config_file,
-    $eye               = $sauron::params::eye,
     $config            = $sauron::params::config,
 ) inherits sauron::params {
     $ensure_dir = $ensure? {
@@ -30,6 +29,8 @@ class sauron::server::config (
     	ensure  => $ensure,
     }
 
-    Concat::Fragment <<| target  == "$::sauron::services_file" |>>
-    concat { "$::sauron::services_file": }
+    Concat::Fragment <<| target  == "$::sauron::services_file" and ensure != "absent" |>>
+    concat { "$::sauron::services_file":
+        ensure => $ensure,
+    }
 }
