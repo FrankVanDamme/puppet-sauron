@@ -30,7 +30,7 @@ have PuppetDB running and configured.
 
 Besides installing the script and setting up cron jobs, Sauron will create a
 user on both monitored ("client") and monitoring ("server") systems and a file
-structure in it's home directory for tmp and log files.
+structure in its home directory for tmp and log files.
 
 We rely on the vcsrepo module to clone Sauron from Github.
 
@@ -40,7 +40,7 @@ Config files are installed in /etc/sauron:
 * a ''services'' config file with per-node specific configurations,
     `puppet.services.yaml`
 
-### Setup Requirements **OPTIONAL**
+### Setup Requirements 
 
 At the moment, you need Git installed to put Sauron in place (on the "server" only).
 
@@ -55,16 +55,18 @@ disk space:
 
 in Hiera, where your server node will pick it up:
 
+~~~ yaml
     sauron::server::config:
         notify:
             - kermit@muppets.domain
+~~~
 
 On the systems to be monitored:
 
     include sauron
 
 From then on, you will get reports by email (provided your name is Kermit) on
-disk and inode usage by default thresholds, whenever the situaion of any one
+disk and inode usage by default thresholds, whenever the situation of any one
 local partition (ext4,...) on a client changes.
 
 ## Usage
@@ -77,7 +79,7 @@ The hash structure under `sauron::server::config` (which is looked up in Hiera u
 
 A slightly more extensive configuration could be:
 
-~~~ puppet
+~~~ yaml
 sauron::server::config:
     email:
         enabled: true
@@ -93,7 +95,7 @@ sauron::server::config:
 ~~~
 
 In this case, your email will be delivered directly by SMTP and the thresholds
-for the partition where your MySQL server's data lives will be considerable
+for the partition where your MySQL server's data lives will be considerably
 lower.
 
 For a full reference, see: https://github.com/flyingrocket/sauron/blob/master/config/example.config.yaml
@@ -107,7 +109,7 @@ configuration.
 The per client configuration supports much of the same directives as the global
 one. Once again, for full reference: https://github.com/flyingrocket/sauron/blob/master/config/example.services.yaml
 
-This structure goes under the eye of Sauron,:
+This structure goes under the eye of Sauron:
 
 Include this data structure in your Hiera hierarchy, where it applies to a node
 to be monitored. In this example, we set a low bar for Grommit to complain about
@@ -116,7 +118,7 @@ disk space exceeding 3 quarters of a partition:
 ~~~ yaml
 sauron::eye:
     notify:
-        - grommit@muppets.comain
+        - grommit@muppets.domain
     thresholds:
         default:
             notice: 90
@@ -133,6 +135,7 @@ sauron::eye:
 * main manifest parameters:
   * `ensure` - presence of user and whether node shows up in services file
   * `services_file` - aforementioned file listing nodes and their configuration
+  * `eye` - client specific configuration explained [above](#client-side-configuration)
 
 ## Limitations
 
