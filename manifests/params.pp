@@ -8,6 +8,7 @@ class sauron::params () {
     $ensure             = present
     $services_file      = "/etc/sauron/diskspace/puppet.services.yaml"
     $config_file        = "/etc/sauron/diskspace/puppet.config.yaml"
+    $saurontag          = $::environment
     $eye                = {}
     $config = {
 	dirs => {

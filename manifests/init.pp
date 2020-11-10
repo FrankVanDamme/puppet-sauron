@@ -47,6 +47,7 @@ class sauron (
     String  $ensure             = $sauron::params::ensure,
     String  $services_file      = $sauron::params::services_file,
     Hash    $eye                = $sauron::params::eye,
+    String  $saurontag          = $sauron::params::saurontag,
 ) inherits sauron::params {
 
     user { "sauron":
@@ -64,5 +65,6 @@ class sauron (
         ensure  => $ensure,
         target  => $services_file,
         content => inline_template('<%= @eye_.sub(/^---$/, "")%>'),
+        tag     => $saurontag,
     }
 }

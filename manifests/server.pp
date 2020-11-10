@@ -2,6 +2,7 @@ class sauron::server (
     String $appversion = $sauron::params::appversion,
     String $ensure     = $sauron::params::ensure,
     Hash   $config     = $sauron::params::config,
+    String $saurontag  = $sauron::params::saurontag,
 ) inherits sauron::params {
 
     include sauron
@@ -18,6 +19,7 @@ class sauron::server (
         services_file      => $services_file,
         config_file        => $config_file,
         config             => $config,
+        saurontag          => $saurontag,
     }
 
     class { "sauron::server::cron":

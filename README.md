@@ -132,10 +132,14 @@ sauron::eye:
   * `appversion` - Git tag, branch, or revision of Sauron to checkout 
   * `ensure` - sets presence of application code, cron job, and config files
   * `config` - global config file
+  * `saurontag` - optional tag to divide your hosts to be monitored in groups.
+  By default, this is the current Puppet environment.
 * main manifest parameters:
   * `ensure` - presence of user and whether node shows up in services file
   * `services_file` - aforementioned file listing nodes and their configuration
   * `eye` - client specific configuration explained [above](#client-side-configuration)
+  * `saurontag` - optional tag to divide your hosts to be monitored in groups.
+  By default, this is the current Puppet environment.
 
 ## Limitations
 
