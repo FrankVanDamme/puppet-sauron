@@ -50,21 +50,19 @@ class sauron (
     String  $saurontag          = $sauron::params::saurontag,
 ) inherits sauron::params {
 
-    user { "sauron":
-	ensure     => $ensure,
-	system     => true,
-	managehome => true,
-    }
+    if ( $ensure == present ){
+        user { "sauron":
+            ensure     => $ensure,
+            system     => true,
+            managehome => true,
+        }
 
-    $eye_ = hash2yaml({ $::fqdn => hiera_hash("sauron::eye", $eye) })
+        $eye_ = hash2yaml({ $::fqdn => hiera_hash("sauron::eye", $eye) })
 
-    # Notice that "ensure" is not actually a parameter of concat::fragment, yet
-    # it is still possible to use it in a search expression when realizing the
-    # fragment
-    @@concat::fragment { "sauron_services_$::fqdn":
-        ensure  => $ensure,
-        target  => $services_file,
-        content => inline_template('<%= @eye_.sub(/^---$/, "")%>'),
-        tag     => $saurontag,
+        @@concat::fragment { "sauron_services_$::fqdn":
+            target  => $services_file,
+            content => inline_template('<%= @eye_.sub(/^---$/, "")%>'),
+            tag     => $saurontag,
+        }
     }
 }

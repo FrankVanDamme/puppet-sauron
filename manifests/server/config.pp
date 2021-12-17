@@ -30,7 +30,7 @@ class sauron::server::config (
     	ensure  => $ensure,
     }
 
-    Concat::Fragment <<| target  == "$::sauron::services_file" and tag == "$saurontag" and ensure != "absent" |>>
+    Concat::Fragment <<| target  == "$::sauron::services_file" and tag == "$saurontag" |>>
     concat { "$::sauron::services_file":
         ensure => $ensure,
     }
