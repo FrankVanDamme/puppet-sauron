@@ -57,9 +57,9 @@ class sauron (
             managehome => true,
         }
 
-        $eye_ = hash2yaml({ $::fqdn => hiera_hash("sauron::eye", $eye) })
+        $eye_ = hash2yaml({ $facts[networking][fqdn] => hiera_hash("sauron::eye", $eye) })
 
-        @@concat::fragment { "sauron_services_$::fqdn":
+        @@concat::fragment { "sauron_services_${facts[networking][fqdn]}":
             target  => $services_file,
             content => inline_template('<%= @eye_.sub(/^---$/, "")%>'),
             tag     => $saurontag,
