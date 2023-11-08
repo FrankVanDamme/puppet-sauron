@@ -1,8 +1,11 @@
+# Server side class: include on node(s) that run(s) Sauron
 class sauron::server (
-    String $appversion = $sauron::params::appversion,
-    String $ensure     = $sauron::params::ensure,
-    Hash   $config     = $sauron::params::config,
-    String $saurontag  = $sauron::params::saurontag,
+    String $appversion          = $sauron::params::appversion,
+    String $ensure              = $sauron::params::ensure,
+    Hash   $config              = $sauron::params::config,
+    String $saurontag           = $sauron::params::saurontag,
+    Hash $cron_diskspace_params = {},
+    Hash $cron_inode_params     = {},
 ) inherits sauron::params {
 
     include sauron
@@ -23,8 +26,10 @@ class sauron::server (
     }
 
     class { "sauron::server::cron":
-        config_file => $config_file,
-        ensure      => $ensure,
+        config_file      => $config_file,
+        ensure           => $ensure,
+        diskspace_params => $cron_diskspace_params,
+        inode_params     => $cron_inode_params,
     }
 
     class { "sauron::server::app":
