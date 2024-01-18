@@ -1,5 +1,6 @@
 # Server side class: include on node(s) that run(s) Sauron
 class sauron::server (
+    String $appsource           = $sauron::params::appsource,
     String $appversion          = $sauron::params::appversion,
     String $ensure              = $sauron::params::ensure,
     Hash   $config              = $sauron::params::config,
@@ -33,6 +34,7 @@ class sauron::server (
     }
 
     class { "sauron::server::app":
+        appsource  => $appsource,
         appversion => $appversion,
         ensure     => $ensure,
     }

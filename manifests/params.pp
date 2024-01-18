@@ -1,5 +1,5 @@
 class sauron::params () {
-
+    $appsource          = "https://github.com/flyingrocket/sauron.git"
     $appversion         = "47eff58b0850edca97f7f09b020ce7daca03deb9"
     $threshold_info     = 87
     $threshold_notice   = 90

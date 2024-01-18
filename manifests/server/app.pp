@@ -1,4 +1,5 @@
 class sauron::server::app (
+    $appsource,
     $appversion,
     $ensure,
 ) inherits sauron::params {
@@ -6,7 +7,7 @@ class sauron::server::app (
     vcsrepo { "/home/sauron/bin/sauron2":
         ensure   => $ensure,
         provider => git,
-        source   => "https://github.com/flyingrocket/sauron.git",
+        source   => $appsource,
         revision => $appversion,
         owner    => "sauron",
     }
